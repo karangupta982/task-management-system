@@ -70,7 +70,6 @@ The Task Management System enables seamless collaboration on tasks while maintai
 - **JWT** - JSON Web Tokens for authentication
 - **bcryptjs** - Password hashing
 - **Nodemailer** - Email sending
-- **Resend** - Email service provider
 - **Express Validator** - Input validation
 - **Morgan** - HTTP request logger
 - **CORS** - Cross-origin resource sharing
@@ -100,7 +99,6 @@ The Task Management System enables seamless collaboration on tasks while maintai
    JWT_SECRET=your_jwt_secret_key
    EMAIL_USER=your_email@example.com
    EMAIL_PASS=your_email_password
-   RESEND_API_KEY=your_resend_api_key
    FRONTEND_URL=http://localhost:5173
    ```
 
@@ -200,11 +198,3 @@ The Task Management System enables seamless collaboration on tasks while maintai
   updatedAt: Date
 }
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
