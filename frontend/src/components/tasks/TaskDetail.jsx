@@ -12,6 +12,13 @@ const TaskDetail = () => {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAddCollaborator, setShowAddCollaborator] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    priority: ''
+  });
 
   useEffect(() => {
     fetchTask();
@@ -22,6 +29,12 @@ const TaskDetail = () => {
       setLoading(true);
       const data = await taskService.getTask(id);
       setTask(data.task);
+      setEditForm({
+        title: data.task.title,
+        description: data.task.description || '',
+        dueDate: data.task.dueDate ? new Date(data.task.dueDate).toISOString().split('T')[0] : '',
+        priority: data.task.priority
+      });
     } catch (error) {
       toast.error('Failed to fetch task');
       navigate('/dashboard');
@@ -40,15 +53,15 @@ const TaskDetail = () => {
     }
   };
 
-  const handleRemoveCollaborator = async (userId) => {
-    if (!window.confirm('Are you sure you want to remove this collaborator?')) return;
-
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
     try {
-      await taskService.removeCollaborator(id, userId);
-      toast.success('Collaborator removed');
-      fetchTask();
+      await taskService.updateTask(id, editForm);
+      setTask({ ...task, ...editForm });
+      setIsEditing(false);
+      toast.success('Task updated successfully');
     } catch (error) {
-      toast.error('Failed to remove collaborator');
+      toast.error('Failed to update task');
     }
   };
 
@@ -98,26 +111,89 @@ const TaskDetail = () => {
         {/* Header */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">{task.title}</h1>
-            <div className="flex items-center space-x-3">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${priorityColors[task.priority]}`}>
-                {task.priority} Priority
-              </span>
-              {isCreator && (
-                <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">
-                  You are the owner
-                </span>
-              )}
-            </div>
+            {isEditing ? (
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={editForm.title}
+                    onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">Description</label>
+                  <textarea
+                    value={editForm.description}
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    rows="4"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">Due Date</label>
+                    <input
+                      type="date"
+                      value={editForm.dueDate}
+                      onChange={(e) => setEditForm({ ...editForm, dueDate: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-1">Priority</label>
+                    <select
+                      value={editForm.priority}
+                      onChange={(e) => setEditForm({ ...editForm, priority: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="High">High</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Low">Low</option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+                >
+                  Save Changes
+                </button>
+              </form>
+            ) : (
+              <>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">{task.title}</h1>
+                <div className="flex items-center space-x-3">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${priorityColors[task.priority]}`}>
+                    {task.priority} Priority
+                  </span>
+                  {isCreator && (
+                    <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm">
+                      You are the owner
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {isCreator && (
-            <button
-              onClick={handleDeleteTask}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            >
-              Delete Task
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              >
+                {isEditing ? 'Cancel Edit' : 'Edit Task'}
+              </button>
+              <button
+                onClick={handleDeleteTask}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+              >
+                Delete Task
+              </button>
+            </div>
           )}
         </div>
 
