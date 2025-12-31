@@ -77,6 +77,16 @@ const TaskDetail = () => {
     }
   };
 
+  const handleRemoveCollaborator = async (userId) => {
+    try {
+      await taskService.removeCollaborator(id, userId);
+      setTask({ ...task, collaborators: task.collaborators.filter(c => c.userId._id !== userId) });
+      toast.success('Collaborator removed successfully');
+    } catch (error) {
+      toast.error('Failed to remove collaborator');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
