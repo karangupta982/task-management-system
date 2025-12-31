@@ -8,7 +8,7 @@ exports.taskAddedTemplate = (data) => {
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background-color: #4F46E5; color: white; padding: 20px; text-align: center; }
         .content { background-color: #f9f9f9; padding: 20px; margin: 20px 0; }
-        .button { display: inline-block; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .button { display: inline-block; padding: 12px 24px; background-color: black; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
         .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
         .detail { margin: 10px 0; }
         .label { font-weight: bold; }
